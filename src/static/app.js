@@ -21,23 +21,27 @@ document.addEventListener("DOMContentLoaded", () => {
         const spotsLeft = details.max_participants - details.participants.length;
 
         // Monta a lista de participantes (ou mensagem caso não haja)
-        let participantsHtml = "";
+        const participantsDiv = document.createElement("div");
+        participantsDiv.className = "participants-list";
+
+        const participantsTitle = document.createElement("div");
+        participantsTitle.className = "participants-list-title";
+        participantsTitle.textContent = "Participantes:";
+        participantsDiv.appendChild(participantsTitle);
+
         if (details.participants.length > 0) {
-          participantsHtml = `
-            <div class="participants-list">
-              <div class="participants-list-title">Participantes:</div>
-              <ul>
-                ${details.participants.map(email => `<li>${email}</li>`).join("")}
-              </ul>
-            </div>
-          `;
+          const ul = document.createElement("ul");
+          details.participants.forEach(email => {
+            const li = document.createElement("li");
+            li.textContent = email;
+            ul.appendChild(li);
+          });
+          participantsDiv.appendChild(ul);
         } else {
-          participantsHtml = `
-            <div class="participants-list">
-              <div class="participants-list-title">Participantes:</div>
-              <div style="color:#888;">Nenhum inscrito ainda.</div>
-            </div>
-          `;
+          const noParticipants = document.createElement("div");
+          noParticipants.style.color = "#888";
+          noParticipants.textContent = "Nenhum inscrito ainda.";
+          participantsDiv.appendChild(noParticipants);
         }
 
         activityCard.innerHTML = `
@@ -45,8 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-          ${participantsHtml}
         `;
+
+        activityCard.appendChild(participantsDiv);
 
         activitiesList.appendChild(activityCard);
 
